@@ -34,7 +34,6 @@ Platform.runLater(() -> {
 2、后台线程的实现方式
 
     a、task类
-    
 ```
 Task task = new Task() {
             @Override
