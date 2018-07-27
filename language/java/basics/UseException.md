@@ -9,7 +9,7 @@ There are two main differences between checked, or “normal,” exceptions, and
 - The compiler doesn’t require that runtime exceptions are caught.
 This means that when a runtime exception is thrown it has the potential to propagate to the JVM without any prior warning, thus crashing the application. This makes runtime exceptions bad for managing errors that are recoverable, and great for failing the application for errors that are irrecoverable such as defective code.
 
-####Checked exceptions
+#### Checked exceptions
 
 Checked exceptions are different from runtime exceptions in that:
 - Checked exceptions have to be mentioned in a method’s signature.
@@ -17,14 +17,14 @@ Checked exceptions are different from runtime exceptions in that:
 
 This means that checked exceptions never propagate up to the JVM and cannot crash your application unless you have deliberately allowed it by including them in your main method’s signature. This makes checked exceptions great for managing errors that are recoverable, and bad for errors that are irrecoverable. Who would want to keep catching exceptions that they can do absolutely nothing about? (Answer: nobody.)
 
-####The meaning of “recovery” from errors
+#### The meaning of “recovery” from errors
 “Recovery” means different things to different people (and situations, and applications).
 Imagine that we are trying to connect to a server and the server is not responding. It’s possible to recover from the resulting exception by connecting to a different server, given that it has the same capabilities of the server to which we originally tried to connect.
 This will achieve the original goal, thus we have recovered from the error.
 This is not exactly what recovery means in this context — if it's possible to make such recovery as was mentioned in the illustration, then by all means you should do it.
 However, recovery could also be displaying an alert dialog to the user that describes the incident, or perhaps sending an email to an administrator, or even simply logging the error to a log file. All of these options qualify as ‘recovery’ – taking a valid and known course of action in the event of an exception.
 
-####Using the correct exception type
+#### Using the correct exception type
 With this information about the nature of exceptions and a workable definition of “recovery” in mind, the de facto standards in industry regarding exception handling make sense, and have evidently been practiced in the JVM and the Java runtime library itself:
 - If the cause of the error is because the code is incorrect, throw a runtime exception.
 - If the cause of the error is because of state while the code is correct, throw a checked exception.
@@ -33,7 +33,7 @@ The reason for this is that if the code is correct, the matter is very likely to
 Examples include situations where you try to connect to a server without an internet connection — there is no need to crash the app. A gentle way to deal with the error is to display an error dialog that explains what happened, allowing the user to fix their connection, given a clear enough message.
 If the error is in the code, and the program itself is defective, then writing a recovery path is irrelevant — how can you recover from a problem that you don’t even know exists yet? Or if you do know what the problem is, then why write a recovery path at all instead of fixing the problem?
 
-####Runtime exception examples
+#### Runtime exception examples
 The following is an error for which a runtime exception is appropriate:
 float nan = 1 / 0;
 This will throw a division by zero exception. It is appropriate because the only means of fixing this issue is to modify the code, it is not dependent on any external state.
@@ -53,7 +53,7 @@ public HashMap(int initialCapacity, float loadFactor) {
 
 In the case presented above it is also appropriate to throw runtime exceptions, because it is not logically sound to construct a hash map with negative capacity, or a load factor that is not a positive number. This error is not due to something that was transmitted over the network, the state of a file or the disk, user input, or any other external state — it’s because a calculation is wrong, or the flow is inappropriate in that it permitted these values, or the programmer is insane. Either way — it’s the code that has to be fixed.
 
-####Checked exception example
+#### Checked exception example
 The following is a rather common example of “exception handling,” often written by programmers who think that they’re following Spring‘s example:
 
 ```java
@@ -103,5 +103,5 @@ public void loadDataAndShowUiBecauseUserClickedThatButton() {
 }
 ```
 
-####Ending notes
+#### Ending notes
 Exceptions are a wonderful feature; it is worthwhile to use them. Don’t invent your own ways to handle and propagate errors; you’ll have less trouble and better results if you stick to the idiom instead of fighting with the platform that you are using.

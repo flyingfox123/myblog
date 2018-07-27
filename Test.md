@@ -10,7 +10,7 @@
 其中JavaFX Application Thread被称为用户线程，负责初始化Scene Graph。界面上一些组件的修改和操作需要放到此线程中进行，如果不是在此线程下进行的组件操作，可能会报出：Not on FX application thread;
 
 
-```
+```java
  void runToolkit() {
         Thread user = Thread.currentThread();
 
@@ -20,7 +20,7 @@
 
 当我们在使用多线程时，如果在自己实现的线程中需要修改组件元素，需要在线程中调用如下方法实现
 
-```
+```java
 Platform.runLater(() -> {
                     // 组件操作
 });
@@ -34,7 +34,7 @@ Platform.runLater(() -> {
 2、后台线程的实现方式
 
     a、task类
-```
+```java
 Task task = new Task() {
             @Override
             protected Object call() throws Exception {
@@ -42,9 +42,9 @@ Task task = new Task() {
                 return null;
             }
         };
- 
+
  Thread thread = new Thread(task);
  thread.setDaemon(true);
  thread.start();
-        
+
 ```
