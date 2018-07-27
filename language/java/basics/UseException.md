@@ -1,43 +1,43 @@
 In this article we are going to address the common misuse of exceptions, more specifically those times when programmers fail to correctly propagate exceptions. Along the way, and most of this article, we will talk about the differences between runtime and checked exceptions and the ways in which it is appropriate to use them.
 
-####Runtime exceptions
+#### Runtime exceptions
 
-There are two main differences between checked, or °∞normal,°± exceptions, and runtime exceptions:
+There are two main differences between checked, or ‚Äúnormal,‚Äù exceptions, and runtime exceptions:
 
-- Runtime exceptions don°Øt have to be mentioned in a method°Øs signature, and the compiler doesn°Øt warn about them.
+- Runtime exceptions don‚Äôt have to be mentioned in a method‚Äôs signature, and the compiler doesn‚Äôt warn about them.
 
-- The compiler doesn°Øt require that runtime exceptions are caught.
+- The compiler doesn‚Äôt require that runtime exceptions are caught.
 This means that when a runtime exception is thrown it has the potential to propagate to the JVM without any prior warning, thus crashing the application. This makes runtime exceptions bad for managing errors that are recoverable, and great for failing the application for errors that are irrecoverable such as defective code.
 
 ####Checked exceptions
 
 Checked exceptions are different from runtime exceptions in that:
-- Checked exceptions have to be mentioned in a method°Øs signature.
+- Checked exceptions have to be mentioned in a method‚Äôs signature.
 - Checked exceptions have to be caught, or the code will not compile. (Exception handling is forced by the specification and compiler.)
 
-This means that checked exceptions never propagate up to the JVM and cannot crash your application unless you have deliberately allowed it by including them in your main method°Øs signature. This makes checked exceptions great for managing errors that are recoverable, and bad for errors that are irrecoverable. Who would want to keep catching exceptions that they can do absolutely nothing about? (Answer: nobody.)
+This means that checked exceptions never propagate up to the JVM and cannot crash your application unless you have deliberately allowed it by including them in your main method‚Äôs signature. This makes checked exceptions great for managing errors that are recoverable, and bad for errors that are irrecoverable. Who would want to keep catching exceptions that they can do absolutely nothing about? (Answer: nobody.)
 
-####The meaning of °∞recovery°± from errors
-°∞Recovery°± means different things to different people (and situations, and applications).
-Imagine that we are trying to connect to a server and the server is not responding. It°Øs possible to recover from the resulting exception by connecting to a different server, given that it has the same capabilities of the server to which we originally tried to connect.
+####The meaning of ‚Äúrecovery‚Äù from errors
+‚ÄúRecovery‚Äù means different things to different people (and situations, and applications).
+Imagine that we are trying to connect to a server and the server is not responding. It‚Äôs possible to recover from the resulting exception by connecting to a different server, given that it has the same capabilities of the server to which we originally tried to connect.
 This will achieve the original goal, thus we have recovered from the error.
-This is not exactly what recovery means in this context °™ if it's possible to make such recovery as was mentioned in the illustration, then by all means you should do it.
-However, recovery could also be displaying an alert dialog to the user that describes the incident, or perhaps sending an email to an administrator, or even simply logging the error to a log file. All of these options qualify as °Ærecovery°Ø ®C taking a valid and known course of action in the event of an exception.
+This is not exactly what recovery means in this context ‚Äî if it's possible to make such recovery as was mentioned in the illustration, then by all means you should do it.
+However, recovery could also be displaying an alert dialog to the user that describes the incident, or perhaps sending an email to an administrator, or even simply logging the error to a log file. All of these options qualify as ‚Äòrecovery‚Äô ‚Äì taking a valid and known course of action in the event of an exception.
 
 ####Using the correct exception type
-With this information about the nature of exceptions and a workable definition of °∞recovery°± in mind, the de facto standards in industry regarding exception handling make sense, and have evidently been practiced in the JVM and the Java runtime library itself:
+With this information about the nature of exceptions and a workable definition of ‚Äúrecovery‚Äù in mind, the de facto standards in industry regarding exception handling make sense, and have evidently been practiced in the JVM and the Java runtime library itself:
 - If the cause of the error is because the code is incorrect, throw a runtime exception.
 - If the cause of the error is because of state while the code is correct, throw a checked exception.
 -
 The reason for this is that if the code is correct, the matter is very likely to be recoverable.
-Examples include situations where you try to connect to a server without an internet connection °™ there is no need to crash the app. A gentle way to deal with the error is to display an error dialog that explains what happened, allowing the user to fix their connection, given a clear enough message.
-If the error is in the code, and the program itself is defective, then writing a recovery path is irrelevant °™ how can you recover from a problem that you don°Øt even know exists yet? Or if you do know what the problem is, then why write a recovery path at all instead of fixing the problem?
+Examples include situations where you try to connect to a server without an internet connection ‚Äî there is no need to crash the app. A gentle way to deal with the error is to display an error dialog that explains what happened, allowing the user to fix their connection, given a clear enough message.
+If the error is in the code, and the program itself is defective, then writing a recovery path is irrelevant ‚Äî how can you recover from a problem that you don‚Äôt even know exists yet? Or if you do know what the problem is, then why write a recovery path at all instead of fixing the problem?
 
 ####Runtime exception examples
 The following is an error for which a runtime exception is appropriate:
 float nan = 1 / 0;
 This will throw a division by zero exception. It is appropriate because the only means of fixing this issue is to modify the code, it is not dependent on any external state.
-Here°Øs another example, a portion of HashMap°Æs constructor:
+Here‚Äôs another example, a portion of HashMap‚Äòs constructor:
 
 ```java
 public HashMap(int initialCapacity, float loadFactor) {
@@ -51,10 +51,10 @@ public HashMap(int initialCapacity, float loadFactor) {
 }
 ```
 
-In the case presented above it is also appropriate to throw runtime exceptions, because it is not logically sound to construct a hash map with negative capacity, or a load factor that is not a positive number. This error is not due to something that was transmitted over the network, the state of a file or the disk, user input, or any other external state °™ it°Øs because a calculation is wrong, or the flow is inappropriate in that it permitted these values, or the programmer is insane. Either way °™ it°Øs the code that has to be fixed.
+In the case presented above it is also appropriate to throw runtime exceptions, because it is not logically sound to construct a hash map with negative capacity, or a load factor that is not a positive number. This error is not due to something that was transmitted over the network, the state of a file or the disk, user input, or any other external state ‚Äî it‚Äôs because a calculation is wrong, or the flow is inappropriate in that it permitted these values, or the programmer is insane. Either way ‚Äî it‚Äôs the code that has to be fixed.
 
 ####Checked exception example
-The following is a rather common example of °∞exception handling,°± often written by programmers who think that they°Øre following Spring°Æs example:
+The following is a rather common example of ‚Äúexception handling,‚Äù often written by programmers who think that they‚Äôre following Spring‚Äòs example:
 
 ```java
 public Data dataAccessCode(){
@@ -66,7 +66,7 @@ public Data dataAccessCode(){
 }
 ```
 
-Honestly, the frustration of a person who would take part in such an abomination is understandable. What can they possibly do in that method to deal with an SQL exception? It°Øs an exception in the database, there are no means of °∞recovery,°± and this scope is probably incapable of accessing the UI to display an error dialog. Some more sophisticated evil-doers solve this by doing something of this sort:
+Honestly, the frustration of a person who would take part in such an abomination is understandable. What can they possibly do in that method to deal with an SQL exception? It‚Äôs an exception in the database, there are no means of ‚Äúrecovery,‚Äù and this scope is probably incapable of accessing the UI to display an error dialog. Some more sophisticated evil-doers solve this by doing something of this sort:
 
 ```java
 public Data dataAccessCode() {
@@ -88,7 +88,7 @@ public Data dataAccessCode() throws SQLException {
 }
 ```
 
-This way, the code is not even °∞uglified°± and it allows for the possibility of recovery by the caller, which is more aware of the grander scheme of things:
+This way, the code is not even ‚Äúuglified‚Äù and it allows for the possibility of recovery by the caller, which is more aware of the grander scheme of things:
 
 ```java
 public void loadDataAndShowUiBecauseUserClickedThatButton() {
@@ -96,7 +96,7 @@ public void loadDataAndShowUiBecauseUserClickedThatButton() {
         Data data = dataAccessCode();
         showUiForData(data);
     } catch (SQLException e) {
-        // This method°Øs scope can do UI, so we don't need sorcery to show an error dialog.
+        // This method‚Äôs scope can do UI, so we don't need sorcery to show an error dialog.
         // messages is an internationalized ResourceBundle.
         showErrorDialog(messages.getString("inaccessibleData"));
     }
@@ -104,4 +104,4 @@ public void loadDataAndShowUiBecauseUserClickedThatButton() {
 ```
 
 ####Ending notes
-Exceptions are a wonderful feature; it is worthwhile to use them. Don°Øt invent your own ways to handle and propagate errors; you°Øll have less trouble and better results if you stick to the idiom instead of fighting with the platform that you are using.
+Exceptions are a wonderful feature; it is worthwhile to use them. Don‚Äôt invent your own ways to handle and propagate errors; you‚Äôll have less trouble and better results if you stick to the idiom instead of fighting with the platform that you are using.
